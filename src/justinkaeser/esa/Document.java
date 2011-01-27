@@ -70,6 +70,48 @@ public class Document {
 		return (double)frequency(ngram) / size;
 	}
 	
+
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ngrams == null) ? 0 : ngrams.hashCode());
+		result = prime * result + size;
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Document other = (Document) obj;
+		if (ngrams == null) {
+			if (other.ngrams != null)
+				return false;
+		} else if (!ngrams.equals(other.ngrams))
+			return false;
+		if (size != other.size)
+			return false;
+		if (text == null) {
+			if (other.text != null)
+				return false;
+		} else if (!text.equals(other.text))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		return true;
+	}
+
 	/**
 	 * Tokenize the given text, add tokens to a list.
 	 * @param text
@@ -78,7 +120,7 @@ public class Document {
 	private static List<String> tokenize(String text) {
 		List<String> tokens = new ArrayList<String>();
 		
-		StringTokenizer tokenizer = new StringTokenizer(text," ,.;:!?-");
+		StringTokenizer tokenizer = new StringTokenizer(text," \t\n,.;:!?-_()[]{}<>|+*/='\"\\");
 		
 		while (tokenizer.hasMoreTokens())
 			tokens.add(tokenizer.nextToken().toLowerCase());

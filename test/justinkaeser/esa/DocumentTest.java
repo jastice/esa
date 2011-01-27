@@ -23,9 +23,9 @@ public class DocumentTest {
 	public void doc2gram() {
 		Document doc = new Document(title, text, 2);
 		
+		assertTrue(doc.ngrams.containsKey(new NGram("hans")));
 		assertTrue(doc.ngrams.containsKey(new NGram("hans","is")));
 		assertTrue(doc.ngrams.containsKey(new NGram("german","danish")));
-		assertTrue(doc.ngrams.containsKey(new NGram("hans")));
 		
 		assertFalse(doc.ngrams.containsKey(new NGram("hans","wigalois")));
 	}

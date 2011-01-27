@@ -43,4 +43,14 @@ public class Corpus {
 	public double relativeFrequency(NGram ngram) {
 		return totalNGrams > 0? (double)ngramFrequency.get(ngram) / totalNGrams : 0;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		for (Document doc : documents)
+			result.append(doc.title).append("; ");
+		
+		return result.toString();
+			
+	}
 }

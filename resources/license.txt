@@ -1,0 +1,2 @@
+This implementation of Explicit Semantic Analysis by Justin Kaeser <jast@zno.de>
+is licensed under Creative Commons License: CC-BY-SA

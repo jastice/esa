@@ -11,13 +11,18 @@ public class NGram {
 		this.n = strings.length;
 		this.grams = Arrays.asList(strings);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		for (String s : grams)
+			result.append(s).append(" ");
+		return result.toString();
+	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((grams == null) ? 0 : grams.hashCode());
-		return result;
+		return grams.hashCode();
 	}
 
 	@Override
