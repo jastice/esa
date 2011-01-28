@@ -1,8 +1,12 @@
 package justinkaeser.esa;
 
-import java.util.Map; 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
-public class MathUtil {
+public class Util {
 
 	/**
 	 * Calculate tf-idf value for an ngram in given corpus and document.
@@ -53,5 +57,29 @@ public class MathUtil {
 		return product;
 	}
 	
+	/**
+	 * Add the concepts to a list sorted by the weight of the concepts, descending.
+	 * @param concepts sparse vector of concepts
+	 * @return sorted list of concepts
+	 */
+	public static List<Document> sortedConcepts(Map<Document, Double> concepts) {
+		List<Document> sorted = new ArrayList<Document>(concepts.keySet());
+		Collections.sort(sorted, new ValueComparator(concepts));
+		return sorted;
+	}	
 	
+	
+	/**
+	 * Value comparator for concept vectors, descending
+	 */
+	private static class ValueComparator implements Comparator<Document> {
+		private Map<Document,Double> map;
+		public ValueComparator(Map<Document,Double> map) {
+			this.map = map;
+		}
+		@Override
+		public int compare(Document o1, Document o2) {
+			return map.get(o2).compareTo(map.get(o1));
+		}
+	}
 }

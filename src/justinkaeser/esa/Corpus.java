@@ -37,7 +37,10 @@ public class Corpus {
 	 * @return inverse document frequency of given term
 	 */
 	public double idf(NGram ngram) {
-		return Math.log((double)(documents.size()) / ngramDocuments.get(ngram).size());
+		Set<Document> ngramDocs = ngramDocuments.get(ngram);
+		return Math.log(
+				(double)(documents.size()) / 
+				(ngramDocs==null? 0 : ngramDocs.size()) + 1); // add 1 to avoid division by 0
 	}
 	
 	public double relativeFrequency(NGram ngram) {

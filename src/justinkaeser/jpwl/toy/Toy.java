@@ -1,8 +1,18 @@
 package justinkaeser.jpwl.toy;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.CharBuffer;
+import java.util.Map;
+
 import justinkaeser.esa.Corpus;
 import justinkaeser.esa.Document;
 import justinkaeser.esa.Index;
+import justinkaeser.esa.Util;
 import de.tudarmstadt.ukp.wikipedia.api.DatabaseConfiguration;
 import de.tudarmstadt.ukp.wikipedia.api.Page;
 import de.tudarmstadt.ukp.wikipedia.api.Wikipedia;
@@ -12,7 +22,7 @@ import de.tudarmstadt.ukp.wikipedia.api.exception.WikiApiException;
 public class Toy {
 	
 
-	public static void main(String[] args) throws WikiApiException {
+	public static void main(String[] args) throws WikiApiException, IOException {
 
 		// configure the database connection parameters
 		DatabaseConfiguration dbConfig = new DatabaseConfiguration();
@@ -33,16 +43,30 @@ public class Toy {
 			corpus.addDocument(doc);
 			index.add(doc);
 			
-			if (i++>=15)
+			if (i++>=1000)
 				break;
 		}
+		
+		File in = new File("/home/jast/windocs/office/studium/Wikipedia/corpus/adolf koch.txt");
+		BufferedReader reader = new BufferedReader(new FileReader(in));
+		StringBuilder builder = new StringBuilder();
+		
+		for (String line = ""; (line = reader.readLine()) != null;)
+			builder.append(line);
+		
+		Document bdauh = new Document("bdauh", builder.toString());
+		Map<Document, Double> bdauhConcepts = index.conceptVector(bdauh);
+		
+		for (Document concept : Util.sortedConcepts(bdauhConcepts))
+			System.out.println(concept.title);
+		
 		
 //		System.out.println("----- Corpus:");
 //		System.out.println(corpus);
 //		
 //		
-		System.out.println("----- Index:");
-		System.out.println(index);
+//		System.out.println("----- Index:");
+//		System.out.println(index);
 		        
 //		String title = "Mahatma Gandhi";
 //		Page page = wiki.getPage(title);
