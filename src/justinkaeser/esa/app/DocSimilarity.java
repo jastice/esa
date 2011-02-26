@@ -26,7 +26,7 @@ public class DocSimilarity {
 		Document doc0 = IOUtil.fromFile(new File(input0));
 		Document doc1 = IOUtil.fromFile(new File(input1));
 		
-		Index index =  IOUtil.buildIndex();
+		Index index =  IOUtil.buildIndex().index;
 		
 		Map<Document, Double> concepts0 = index.conceptVector(doc0);
 		Map<Document, Double> concepts1 = index.conceptVector(doc1);

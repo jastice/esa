@@ -1,6 +1,8 @@
 package justinkaeser.esa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,16 +13,20 @@ import java.util.StringTokenizer;
  * Represents a document. The document is parsed and 
  * represented as set of ngrams with associated frequencies.
  */
-public class Document {
+public class Document implements Serializable {
 
-	public final String title;
-	public final String text;
+	private static final long serialVersionUID = -7155767113963755530L;
+
+	/** Document title. */
+	public final String title;	
 	
-	
-	/** Absolute ngram freuencies. */
-	final Map<NGram,Integer> ngrams = new HashMap<NGram, Integer>();;
+	/** Absolute ngram freuencies. This map may not be modified. */
+	final Map<NGram,Integer> ngrams;
 	/** Total amount of ngrams. */
-	private int size = 0;
+	private final int size;
+	
+	/** Precomputed hash. Possible since the object is immutable. */
+	private final int hash;
 	
 	/**
 	 * Create document with given title, text and ngram size of 1.
@@ -39,8 +45,12 @@ public class Document {
 	 */
 	public Document(String title, String text, int n) {
 		this.title = title;
-		this.text = text;
-		buildNGrams(n, tokenize(text));
+		
+		BuiltNGrams b = buildNGrams(n, tokenize(text));
+		this.ngrams = Collections.unmodifiableMap(b.map);
+		this.size = b.size;
+		
+		this.hash = calculateHash();
 	}
 	
 	/**
@@ -52,7 +62,7 @@ public class Document {
 	}
 	
 	/**
-	 * Aboslute frequency of an ngram.
+	 * Absolute frequency of an ngram.
 	 * @param ngram
 	 * @return
 	 */
@@ -70,17 +80,22 @@ public class Document {
 		return (double)frequency(ngram) / size;
 	}
 	
-
-	
-	@Override
-	public int hashCode() {
+	/**
+	 * Calculates hash code for this document.
+	 * @return
+	 */
+	private int calculateHash() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((ngrams == null) ? 0 : ngrams.hashCode());
 		result = prime * result + size;
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
+	}
+	
+	@Override
+	public int hashCode() {
+		return hash;		
 	}
 
 	@Override
@@ -91,22 +106,17 @@ public class Document {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
 		Document other = (Document) obj;
-		if (ngrams == null) {
-			if (other.ngrams != null)
-				return false;
-		} else if (!ngrams.equals(other.ngrams))
-			return false;
+
 		if (size != other.size)
 			return false;
-		if (text == null) {
-			if (other.text != null)
-				return false;
-		} else if (!text.equals(other.text))
+		
+		if (!ngrams.equals(other.ngrams))
 			return false;
-		if (title == null) {
-			if (other.title != null)
-				return false;
+
+		if (title == null && other.title != null) {
+			return false;
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
@@ -129,12 +139,17 @@ public class Document {
 	}
 	
 	/**
-	 * Build n-grams of a list of tokens.
+	 * Build n-grams of a list of tokens. 
+	 * Builds ngrams of length 1 up to nMax.
 	 * @param nMax maximum length of ngrams.
 	 * @param tokens
 	 * @return
 	 */
-	private void buildNGrams(int nMax, List<String> tokens) {
+	private static BuiltNGrams buildNGrams(int nMax, List<String> tokens) {
+		
+		Map<NGram,Integer> map = new HashMap<NGram,Integer>();
+		int sizeCount = 0;
+		
 		int tsize = tokens.size();
 		for (int i = 0; i < tsize; i++) {
 			for (int n=1; n<=nMax; n++) {
@@ -143,22 +158,34 @@ public class Document {
 					for (int t=0; t<n; t++)
 						ngram[t] = tokens.get(i+t);
 				}
-				addNGram(new NGram(ngram));
+				addNGram(map, new NGram(ngram));
+				
+				++sizeCount;
 			}
 		}
+		
+		return new BuiltNGrams(map, sizeCount);
 	}
 	
 	/**
-	 * Add an n-gram to the ngram map if it does not exist or increment 
-	 * its frequency count if it does
+	 * Add an n-gram to an ngram map if it does not exist or increment 
+	 * its frequency count if it does.
 	 * @param ngram an ngram
 	 */
-	private void addNGram(NGram ngram) {
-		if (ngrams.containsKey(ngram))
-			ngrams.put(ngram, ngrams.get(ngram)+1);
+	private static void addNGram(Map<NGram,Integer> map, NGram ngram) {
+		if (map.containsKey(ngram))
+			map.put(ngram, map.get(ngram)+1);
 		else
-			ngrams.put(ngram, 1);
+			map.put(ngram, 1);
+	}
+	
+	private static class BuiltNGrams {
+		public final Map<NGram,Integer> map;
+		public final int size;
 		
-		++size;
+		BuiltNGrams(Map<NGram,Integer> map, int size) {
+			this.map = map;
+			this.size = size;
+		}
 	}
 }

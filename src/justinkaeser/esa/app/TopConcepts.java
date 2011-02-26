@@ -25,7 +25,7 @@ public class TopConcepts {
 		Integer n = args.length > 1 ? new Integer(args[1]) : 10;
 		
 		Document doc = IOUtil.fromFile(new File(inputText));
-		Index index =  IOUtil.buildIndex();
+		Index index =  IOUtil.buildIndex().index;
 		
 		Map<Document, Double> concepts = index.conceptVector(doc);
 		

@@ -2,13 +2,16 @@
 
 package justinkaeser.esa;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Index {
+public class Index implements Serializable {
 	
+	private static final long serialVersionUID = 6236822735742289555L;
+
 	/** Minimal weight a concept should have to be saved into the index. */
-	private final double minWeight = 0.001;
+	private static final double minWeight = 0.001;
 
 	/**
 	 * Weighted list of "concepts" aka documents.
@@ -41,6 +44,7 @@ public class Index {
 	/**
 	 * Get map of weights for an ngram. 
 	 * @param ngram
+	 * @return map of weights for an ngram.
 	 */
 	private Map<Document,Double> getWeights(NGram ngram) {
 		if (!index.containsKey(ngram))

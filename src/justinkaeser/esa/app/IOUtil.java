@@ -5,10 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import justinkaeser.esa.Corpus;
 import justinkaeser.esa.Document;
 import justinkaeser.esa.Index;
+import justinkaeser.esa.WikipediaDocument;
 import de.tudarmstadt.ukp.wikipedia.api.DatabaseConfiguration;
 import de.tudarmstadt.ukp.wikipedia.api.Page;
 import de.tudarmstadt.ukp.wikipedia.api.Wikipedia;
@@ -25,7 +29,7 @@ import de.tudarmstadt.ukp.wikipedia.api.exception.WikiTitleParsingException;
 public class IOUtil {
 	
 	/** Maximum size of an ESA index. Used to limit index creation time. */
-	public static final int MAX_INDEX_SIZE = 1000;
+	public static final int MAX_INDEX_SIZE = 1234;
 
 	/**
 	 * Create document object from file.
@@ -60,7 +64,7 @@ public class IOUtil {
 	 * @throws WikiApiException 
 	 * @throws WikiTitleParsingException 
 	 */
-	public static Index buildIndex() throws WikiTitleParsingException, WikiApiException {
+	public static ESAData buildIndex() throws WikiTitleParsingException, WikiApiException {
 		// configure the database connection parameters
 		DatabaseConfiguration dbConfig = new DatabaseConfiguration();
 		dbConfig.setHost(Properties.HOST);
@@ -75,16 +79,38 @@ public class IOUtil {
 		Corpus corpus = new Corpus();
 		Index index = new Index(corpus);
 		int i=0;
+		
+		// temporary list of documents
+		List<Document> docs = new ArrayList<Document>();
+		
 		for (Page page : wiki.getArticles()) {
-			Document doc = new Document(page.getTitle().getPlainTitle(), page.getPlainText());
+			Document doc = new WikipediaDocument(page.getTitle().getPlainTitle(), page.getPlainText(), 1, page.getPageId());
 			corpus.addDocument(doc);
-			index.add(doc);
+			docs.add(doc);
 			
 			if (i++ >= MAX_INDEX_SIZE)
 				break;
 		}
 		
-		return index;
+		for (Document doc : docs)
+			index.add(doc);
+		
+		return new ESAData(index, corpus, docs);
+	}
+	
+	/**
+	 * Data structure for grouping the results of building an index.
+	 */
+	public static class ESAData {
+		public final Index index;
+		public final Corpus corpus;
+		public final Collection<Document> documents;
+		
+		public ESAData(Index index, Corpus corpus, Collection<Document> documents) {
+			this.index = index;
+			this.corpus = corpus;
+			this.documents = documents;
+		}
 	}
 
 }
