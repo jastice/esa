@@ -3,10 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/home/jast/lib/jwpl/v0.5b/JWPL/lib/jwpl_v05b.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/home/jast/lib/jwpl/v0.5b/JWPL/javadoc/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib/JWPL-0.9.2.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
