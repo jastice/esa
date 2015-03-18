@@ -12,11 +12,9 @@ public class Corpus implements Serializable {
 	
 	private final Map<NGram,Integer> ngramFrequency = new HashMap<NGram, Integer>();
 	private final Map<NGram,Set<Document>> ngramDocuments = new HashMap<NGram, Set<Document>>();
+	private final Set<Document> docs = new HashSet<Document>();
 	
 	private int totalNGrams = 0;
-	
-	/** Number of documents in corpus. */
-	private int totalDocuments = 0;
 	
 	public void addDocument(Document document) {
 		for (Map.Entry<NGram, Integer> entry : document.ngrams.entrySet()) {
@@ -30,6 +28,7 @@ public class Corpus implements Serializable {
 				ngramDocuments.put(key, new HashSet<Document>());
 			}
 			ngramDocuments.get(key).add(document);
+			docs.add(document);
 		}		
 	}
 	
@@ -41,7 +40,7 @@ public class Corpus implements Serializable {
 	public double idf(NGram ngram) {
 		Set<Document> ngramDocs = ngramDocuments.get(ngram);
 		return Math.log(
-				((double)totalDocuments) / 
+				((double)docs.size()) / 
 				(ngramDocs==null? 0 : ngramDocs.size()) + 1); // add 1 to avoid division by 0
 	}
 	
@@ -58,7 +57,7 @@ public class Corpus implements Serializable {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result
-			.append("Total documents: ").append(totalDocuments)
+			.append("Total documents: ").append(docs.size())
 			.append("Total n-grams: ").append(totalNGrams).append("\n")
 			.append("Unique n-grams: ").append(ngramFrequency.size()).append("\n");
 		
