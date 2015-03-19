@@ -14,7 +14,7 @@ You need to build an SQL database from a Wikipedia dump with JWPL. I forgot how 
 
 ## Problems?
 
-If you have trouble getting this to run, simply file an issue.
+If you have trouble getting this to run, or have other questions, simply file an issue.
 
 ## License
-Licensed under [LGPL](http://www.gnu.org/licenses/lgpl.html), just like JWPL. Or whatever other license is compatible.
+You can consider this work licensed under [LGPL](http://www.gnu.org/licenses/lgpl.html), just like JWPL. Or whatever other license is compatible. Ask me if you're unsure.
